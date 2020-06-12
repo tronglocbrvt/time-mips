@@ -45,8 +45,14 @@ CheckLeapYear:
 	addi $t0, $zero, 4 # t0 = 4
 	div $a0, $t0 
 	mfhi $t0 # t0 = year % 4
-	
+	bne $t0, $zero, isNotLeapYear # t0 != 0 -> khong phai nam nhuan
+	addi $t0, $zero, 100 # t0 = 100
+	div $a0, $t0 
+	mfhi $t0 # t0 = year % 100
+	beq $t0, $zero, isNotLeapYear # t0 == 0 -> khong phai nam nhuan vi chia het cho 4 & chia het cho 100
 isLeapYear:
-	addi $v0, $v0, 1
+	addi $v0, $zero, 1
 	jr $ra
-
+isNotLeapYear:
+	addi $v0, $zero, 0
+	jr $ra
