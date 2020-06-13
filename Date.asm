@@ -1,3 +1,65 @@
+.data
+	tb1: .asciiz "Nhap day: "
+	tb2: .asciiz "Nhap month: "
+	tb3: .asciiz "Nhap year: "
+	tb4: .asciiz "KQ: "
+	d: .word 0
+	m: .word 0
+	y: .word 0
+	kq: .space 100
+.text
+	#xuat tb1
+	li $v0,4
+	la $a0,tb1
+	syscall
+
+	#Nhap d
+	li $v0,5
+	syscall
+	sw $v0,d
+
+	#xuat tb2
+	li $v0,4
+	la $a0,tb2
+	syscall
+
+	#Nhap m
+	li $v0,5
+	syscall
+	sw $v0,m
+
+	#xuat tb3
+	li $v0,4
+	la $a0,tb3
+	syscall
+
+	#Nhap y
+	li $v0,5
+	syscall
+	sw $v0,y
+	
+	lw $a0, d
+	lw $a1, m
+	lw $a2, y
+	
+	la $a3, kq
+	
+	#goi ham
+	jal Date
+
+	#xuat tb4
+	li $v0,4
+	la $a0,tb4
+	syscall
+
+	#xuat kq
+	li $v0,4
+	la $a0,kq
+	syscall
+
+	#ket thuc
+	li $v0,10
+	syscall
 
 # ====== Ham Xuat Chuoi Theo Dinh Dang Mac Dinh DD/MM/YYYY ===========
 # char* Date(int day, int month, int year, char* TIME)
