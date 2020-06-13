@@ -2,7 +2,8 @@
 	tb1: .asciiz "Nhap year: "
 	tb2: .asciiz "KQ: "
 	str: .space 100
-	kq: .word 0
+	kq1: .word 0
+	kq2: .word 0
 .text
 	#xuat tb1
 	li $v0,4
@@ -16,13 +17,14 @@
 	syscall
 	
 	#Luu $v0 vao str
-	sw $v0,kq
-	
+	sw $v0,kq1
+	sw $v1,kq2
 	#goi ham
-	jal LeapYear
+	jal NearestLeapYear
 	
 	#Lay ket qua tra ve
-	sw $v0,kq
+	sw $v0,kq1
+	sw $v1,kq2
 
 	#xuat tb2
 	li $v0,4
@@ -31,9 +33,19 @@
 
 	#xuat kq
 	li $v0,1
-	lw $a0,kq
+	lw $a0,kq1
 	syscall
 
+	#xuat tb2
+	li $v0,4
+	la $a0,tb2
+	syscall
+
+	#xuat kq
+	li $v0,1
+	lw $a0,kq2
+	syscall
+	
 	#ket thuc
 	li $v0,10
 	syscall
@@ -116,7 +128,6 @@ Year:
 
 	
 	#------------------------------------------------------------
-	#------------------------------------------------------------
 
 # ====== Ham Kiem Tra Nam Nhuan ===========
 # int LeapYear(char* TIME)
@@ -187,3 +198,53 @@ isNotLeapYear:
 	addi $sp, $sp, 8
 	jr $ra
 
+
+# ====== Ham Tim 2 Nam Nhuan Gan Nhat ===========
+# pair<int, int> NearestLeapYear(char* TIME)
+# Tra ve: 2 nam nhuan gan nhat ($v0, $v1)
+# Tham so: $a0: dia chi chuoi TIME
+
+NearestLeapYear:
+# Dau thu tuc 
+	addi $sp, $sp, -20 # khai bao kich thuoc stack
+	sw $ra, 16($sp) 
+	sw $a0, 12($sp) 
+	sw $s0, 8($sp)
+	sw $s1, 4($sp)
+	sw $s2, 0($sp)
+# Than thu tuc
+	# Get year from TIME
+	lw $a0, 12($sp)
+	jal Year
+	#lw $s0, 0($sp)
+	add $s0, $v0, $0 # luu lai gia tri YEAR
+	
+	subi $s1, $s0, 1 # luu gia tri buoc nhay NAM back
+	addi $s2, $s0, 1 # luu gia tri buoc nhay NAM next
+	sw $a0, 12($sp) 
+NearestLeapYear_back:
+	add $a0, $s1, $0
+	jal CheckLeapYear
+	bne $v0, $zero, NearestLeapYear_next # neu la nam nhuan
+	subi $s1, $s1, 1 # giám t0 len 1
+	j NearestLeapYear_back
+
+NearestLeapYear_next:
+	add $a0, $s2, $0
+	jal CheckLeapYear
+	bne $v0, $zero, returnLeapYear # neu la nam nhuan
+	addi $s2, $s2, 1
+	j NearestLeapYear_next
+
+returnLeapYear:
+	add $v0, $s1, $0
+	add $v1, $s2, $0
+
+# Cuoi thu tuc
+	lw $s2, 0($sp)
+	lw $s1, 4($sp)
+	lw $s0, 8($sp)
+	lw $a0, 12($sp) 
+	lw $ra, 16($sp) 
+	addi $sp, $sp, 20
+	jr $ra
