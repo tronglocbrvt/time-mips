@@ -74,11 +74,7 @@
 		sll $t6, $t6, 2
 		add $t6, $t6, $t7
 		lw $t1, 0($t6)
-		
-		# In ra de test
-		li $v0, 4
-		addi $a0, $t1, 0
-		syscall
+	
 		
 		addi $v0, $t1, 0		
 		jr $ra
