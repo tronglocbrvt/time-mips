@@ -85,9 +85,9 @@ main:
 	syscall
 	add $s3, $v0, 0
 	
-	addi $v0, $0 ,4
-	la $a0,tb4
-	syscall
+	#addi $v0, $0 ,4
+	#la $a0,tb4
+	#syscall
 	
 	MainLoop:
 	#Tao so de so sanh
