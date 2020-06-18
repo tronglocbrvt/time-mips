@@ -264,7 +264,7 @@ Date:
 	# luu du lieu tu thanh ghi vao bo nho
 	sb $t1, 8($a3)
 	sb $t2, 9($a3)
-	
+	add $v0, $a3, $zero
 	# Cuoi thu tuc 
 	lw $ra, 0($sp)
 	addi $sp, $sp, 4 
@@ -375,6 +375,7 @@ NhapYear:
 	jal isDigit
 	add $t0, $t0, $v0
 	beq $v0, $zero, inputTime.check
+	jal atoi
 	jal atoi
 	add $t3, $v0, $zero # t3 = gia tri Year o dang int
 inputTime.check:

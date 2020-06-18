@@ -141,7 +141,7 @@ Date:
 	# luu du lieu tu thanh ghi vao bo nho
 	sb $t1, 8($a3)
 	sb $t2, 9($a3)
-	
+	add $v0, $a3, $zero
 	# Cuoi thu tuc 
 	lw $ra, 0($sp)
 	addi $sp, $sp, 4 
