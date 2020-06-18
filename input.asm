@@ -5,12 +5,21 @@
 	msgNotValid: .asciiz "\nKhong hop le!\n"
 	msgValid: .asciiz "\nHop le!\n"
 	Time: .space 100
-	Temp: .space 100
 .text 
 main:
+
+#jal inputMain
+
+
+#la $a0, Time
+#addi $v0, $zero, 4	
+#syscall
+
+#addi $v0, $0, 10
+#syscall
+
 inputMain:
 	la $a0, Time
-	la $a1, Temp
 	jal inputTime
 	add $s0, $v0, $zero
 	add $s1, $v1, $zero
@@ -306,21 +315,19 @@ isDigit.Exit:
 	jr $ra
 
 # ====== Ham Input TIME ===========
-# bool inputTime(char* TIME, char* temp)
+# bool inputTime(char* TIME)
 # Tra ve: 0 (khong hop le) hoac 1 (hop le) ($v0), $v1: dia chi cua TIME
-# Tham so: chuoi TIME ($a0), temp ($a1)
+# Tham so: chuoi TIME ($a0)
 
 inputTime:
 	# Dau thu tuc
-	addi $sp, $sp, -20
-	sw $ra, 16($sp)
-	sw $a0, 12($sp)
-	sw $a1, 8($sp)
-	sw $s0, 4($sp)
-	sw $s1, 0($sp)
+	addi $sp, $sp, -16
+	sw $ra, 12($sp)
+	sw $a0, 8($sp)
+	sw $a1, 4($sp)
+	sw $s0, 0($sp)
 	
 	add $s0, $a0, $0
-	add $s1, $a1, $0
 	# add $t0, $zero, $zero # bien tam de kiem tra tinh trang so lan nhap DAY, MONTH, YEAR toan la so
 	# Than thu tuc
 	# Nhap chuoi ngay
@@ -329,7 +336,7 @@ inputTime:
 	syscall # in ra man hinh thong bao nhap DAY
 	
 	addi $v0, $zero, 8	
-	add $a0, $s1, $zero # a0 = s1
+	add $a0, $s0, $zero # a0 = s0
 	addi $a1, $zero, 100
 	syscall # Nhap ngay
 	
@@ -345,7 +352,7 @@ NhapMonth:
 	syscall # in ra man hinh thong bao nhap MONTH
 	
 	addi $v0, $zero, 8	
-	add $a0, $s1, $zero # a0 = s1
+	add $a0, $s0, $zero # a0 = s0
 	addi $a1, $zero, 100
 	syscall # Nhap thang
 	
@@ -361,7 +368,7 @@ NhapYear:
 	syscall # in ra man hinh thong bao nhap YEAR
 	
 	addi $v0, $zero, 8	
-	add $a0, $s1, $zero # a0 = s1
+	add $a0, $s0, $zero # a0 = s0
 	addi $a1, $zero, 100
 	syscall # Nhap nam
 	
@@ -378,25 +385,25 @@ inputTime.check:
 	add $a0, $t1, $zero
 	add $a1, $t2, $zero
 	add $a2, $t3, $zero
-	add $a3, $s1, $zero
+	add $a3, $s0, $zero
 	jal checkValid
 	
 	beq $v0, $zero, notValidDate
 	addi $v0, $zero, 1
 	jal Date
+	
 	j inputTime.exit
 
 notValidDate:
 	add $v0, $zero, $zero
 inputTime.exit:
 	add $v1, $s0, $zero
-	lw $s1, 0($sp)
-	lw $s0, 4($sp)
-	lw $a1, 8($sp)
-	lw $a0, 12($sp)
-	lw $ra, 16($sp)
+	lw $s0, 0($sp)
+	lw $a1, 4($sp)
+	lw $a0, 8($sp)
+	lw $ra, 12($sp)
 	
-	addi $sp, $sp, 20
+	addi $sp, $sp, 16
 	jr $ra
 	
 # ====== Ham Chuyen Ky Tu Sang So Nguyen ===========
@@ -447,9 +454,8 @@ checkValid:
 	# Dau thu tuc
 	addi $sp, $sp, -16
 	sw $ra, 12($sp)
-	sw $a0, 8($sp)
-	sw $a1, 4($sp)
-	sw $a2, 0($sp)
+	sw $a1, 8($sp)
+	sw $a2, 4($sp)
 	
 	# Than thu tuc
 	slti $t0, $a1, 13 
@@ -518,9 +524,10 @@ CheckThang2:
 	slti $t0, $a0, 30
 	beq $t0, $zero, notValid # if day >= 30
 	
+	sw $a0, 0($sp)
 	add $a0, $a2, $zero # a0 = nam
 	jal CheckLeapYear
-	
+	lw $a0, 0($sp)
 	beq $v0, $zero, NotLeapYear # nam khong nhuan
 	j valid
 NotLeapYear: 
@@ -534,9 +541,8 @@ valid:
 	addi $v0, $zero, 1
 	j checkValid.exit
 checkValid.exit:
-	lw $a2, 0($sp)
-	lw $a1, 4($sp)
-	lw $a0, 8($sp)
+	lw $a2, 4($sp)
+	lw $a1, 8($sp)
 	lw $ra, 12($sp)
 	
 	addi $sp, $sp, 16
