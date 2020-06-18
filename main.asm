@@ -50,9 +50,9 @@
 	tb4: .asciiz "\nKet Qua: "
 	
 	tb5: .asciiz "----Ban hay chon 1 trong cac thao tac duoi day------\n1. Xuat chuoi TIME theo dinh day DD/MM/YYYY\n"
-	tb6: .asciiz "2. Chuyen doi chuoi TIME thanh 1 trong cac dinh dang sau:\n\tA.MM/DD/YYYY\n\tB. Month DD, YYYY\n\tC. DD Month, YYYY\n"
+	tb6: .asciiz "2. Chuyen doi chuoi TIME thanh 1 trong cac dinh dang sau:\n\tA. MM/DD/YYYY\n\tB. Month DD, YYYY\n\tC. DD Month, YYYY\n"
 	tb7: .asciiz "3. Cho biet ngay vua nhap la ngay thu may trong tuan\n4. Kiem tra nam trong chuoi TIME co phai la nam nhuan hay khong\n"
-	tb8: .asciiz "5.Cho biet khoang thoi gian giua chuoi TIME_1 va TIME_2\n6. Cho biet 2 nam nhuan gan nhat trong chuoi TIME\n"
+	tb8: .asciiz "5. Cho biet khoang thoi gian giua chuoi TIME_1 va TIME_2\n6. Cho biet 2 nam nhuan gan nhat trong chuoi TIME\n"
 .text
 
 main:
@@ -216,7 +216,7 @@ main:
 	
 
 inputMain:
-	la $a1, Temp
+	la $a0, Temp
 	addi $sp, $sp, -4
 	sw $ra, 0($sp)
 	jal inputTime
