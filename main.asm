@@ -160,10 +160,12 @@ main:
 	GetTime_5:
 	#Goi ham nhap va luu vao TIME_2
 	la $a0, TIME_2
-	jal inputMain	
+	jal inputMain
+	
 	
 	la $a0, TIME_1
 	la $a1, TIME_2
+	
 	
 	jal GetTime
 	
@@ -216,7 +218,6 @@ main:
 	
 
 inputMain:
-	la $a0, TIME_1
 	addi $sp, $sp, -4
 	sw $ra, 0($sp)
 	jal inputTime
@@ -592,9 +593,11 @@ GetTime:
 	sw $s4, 16($sp)
 	sw $s5, 20($sp)
 	sw $s6, 24($sp)
-	# $t0, $t1, $t2 = d1, m1, y1
-	# $t3, $t4, $t5 = d2, m2, y2
-	addi $sp, $sp, -8
+	# $s0, $s1, $s2 = d1, m1, y1
+	# $s3, $s4, $s5 = d2, m2, y2
+	
+	
+	addi $sp, $sp, -12
 	sw $ra, 28($sp)
 	sw $a0, 32($sp)
 	jal Day
@@ -643,6 +646,9 @@ GetTime:
 	addi $sp, $sp, 8
 	addi $s4, $v0, 0 # Lay m2
 	
+	
+	
+	
 	addi $sp, $sp, -8
 	sw $ra, 28($sp)
 	sw $a0, 32($sp)
@@ -679,10 +685,10 @@ GetTime:
 	slt $t7, $s4, $s1 # m2 < m1
 	bne $t7, $0, Minus
 	
-	bne $s4, $s1, Done
+	bne $s4, $s1, Done # m2 > m1 thi done
 	
 	slt $t7, $s3, $s0
-	beq $s0, $0, Done
+	beq $t7, $0, Done # d2 >= d1 thi done
 	
 	# So sanh xem co phai la ngay 29/2 va 28/2 hay khong
 	addi $t7, $0, 2 # tao hang so de so sánh
