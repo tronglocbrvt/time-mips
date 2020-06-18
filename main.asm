@@ -216,7 +216,7 @@ main:
 	
 
 inputMain:
-	la $a0, Temp
+	la $a0, TIME_1
 	addi $sp, $sp, -4
 	sw $ra, 0($sp)
 	jal inputTime
