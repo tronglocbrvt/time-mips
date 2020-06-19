@@ -24,10 +24,9 @@
 	December: .asciiz "December"
 	MonthNames: .word January, February, March, April, May, June, July, August, September, October, November, December 
 
-	#data cho ham weekday
-	months:  .word 0,3,3,6,1,4,6,2,5,0,3,5
-	leapMonths: .word 6,2,3,6,1,4,6,2,5,0,3,5
-	
+	# data cho ham weekday
+	tempMonth: .word 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4
+
 	Sun: .asciiz "Sun"
 	Mon: .asciiz "Mon"
 	Tues: .asciiz "Tues"
@@ -779,90 +778,79 @@ GetTime:
 # Tra ve: $v0: Thu trong tuan
 
 Weekday:
-	addi $sp, $sp, -12
-	sw $s0, 0($sp)
+	# Dau thu tuc
+	addi $sp, $sp, -16
+	sw $ra, 12($sp)
+	sw $s0, 8($sp)
 	sw $s1, 4($sp)
-	sw $s2, 8($sp)
+	sw $s2, 0($sp)
 	
+	jal Day # lay ngay
+	add $s0, $v0, $zero
 	
-	addi $sp, $sp, -4
-	sw $ra, 12($sp)
-	jal Day
-	addi $s0, $v0, 0
-	lw $ra, 12($sp)
+	jal Month # lay Month
+	add $s1, $v0, $zero
 	
-	sw $ra, 12($sp)
-	jal Month
-	addi $s1, $v0, 0
-	lw $ra, 12($sp)
+	jal Year # lay Year
+	add $s2, $v0, $zero
 	
-	sw $ra, 12($sp)
-	jal Year
-	addi $s2, $v0, 0
-	lw $ra, 12($sp)
-	addi $sp, $sp, 4
+	slti $t0, $s1, 3
+	bne $t0, $zero, MonthLess3 # month < 3
+	addi $t1, $zero, 0 
+	j L1
+	MonthLess3:
+	addi $t1, $zero, 1
+	L1:
+	sub $s2, $s2, $t1 # y = y - $t1
 	
-	#tinh leap year
-	addi $sp, $sp, -4
-	sw $ra, 12($sp)
-	jal LeapYear
-	lw $ra, 12($sp)
-	addi $sp, $sp, 4
+	# cong thuc xac dinh thu trong tuan: ( y + y / 4 - y / 100 + y / 400 + tempMonth[m - 1] + d) % 7; 
+	# tinh y / 4 
+	addi $t0, $zero, 4
+	div $s2, $t0
+	mflo $t0 # t0 = y / 4
 	
-	# $t0, $t1, $t2 = d, m, y
-	addi $t0, $s0, 0
-	addi $t1, $s1, 0
-	addi $t2, $s2, 0
+	# tinh y / 4 
+	addi $t1, $zero, 100
+	div $s2, $t1
+	mflo $t1 # t1 = y / 100
 	
-	# Tinh m
-	addi $t1, $t1, -1 # offset m cho dung voi array
+	# tinh y / 400 
+	addi $t2, $zero, 400
+	div $s2, $t2
+	mflo $t2 # t2 = y / 400
 	
+	# tinh m-1 
+	subi $s1, $s1, 1 # m = m -1
+	
+	# tinh tempMonth[m-1] -> luc nay la tempMonth[m]
+	la $t3, tempMonth # load mang 
+	sll $s1, $s1, 2 
+	add $t3, $t3, $s1
+	lw $t3, 0($t3)	
+	
+	add $t4, $s2, $t0
+	sub $t4, $t4, $t1
+	add $t4, $t4, $t2
+	add $t4, $t4, $t3
+	add $t4, $t4, $s0
+	
+	addi $t5, $zero, 7
+	div $t4, $t5
+	mfhi $t5
+	
+	# Tim ngay tu $t5
+	la $t6, days
+	sll $t5, $t5, 2
+	add $t5, $t5, $t6
+	lw $v0, 0($t5) # tra ve v0 la thu trong tuan
 
-	
-	beq $v0, $zero, NotLeap
-	# m = LeapMonths[m]
-	la $t3, leapMonths
-	sll $t1, $t1, 2
-	add $t4, $t3, $t1
-	lw $t1, 0($t4)	
-	j Out1
-	
-	NotLeap:
-	# m = months[m]
-	la $t3, months
-	sll $t1, $t1, 2
-	add $t4, $t3, $t1
-	lw $t1, 0($t4)		
-
-	Out1:
-	
-	div $t2, $t2, 100 # c luu vao $t2
-	mfhi $t3 # y luu vao $t3
-	
-	
-	addi $t5, $t5, 0
-	add $t5, $t0, $t1
-	add $t5, $t5, $t3
-	div $t3, $t3, 4 # y = y/4
-	add $t5, $t5, $t3
-	add $t5, $t5, $t2
-	
-	div $t5, $t5, 7
-	mfhi $t6
-	
-	# Tim ngay tu $t6
-	la $t7, days
-	sll $t6, $t6, 2
-	add $t6, $t6, $t7
-	lw $t1, 0($t6)
-	
-	
-	lw $s0, 0($sp)
+	# Cuoi thu tuc
+	lw $s2, 0($sp)
 	lw $s1, 4($sp)
-	lw $s2, 8($sp)
-	addi $sp, $sp, 12
-	
-	addi $v0, $t1, 0		
+	lw $s0, 8($sp)
+	lw $ra, 12($sp)
+	addi $sp, $sp, 16
+	# Tra ve		
 	jr $ra
 
 #-----------------NearestLeapYear-----------------------------
