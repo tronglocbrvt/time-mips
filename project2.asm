@@ -278,7 +278,7 @@ inputMainAgain:
 	j inputMain
 #------------------StrToInt function---------------
 # Tham so: $a0 str
-#Tra ve: $v0 int
+# Tra ve: $v0 int
 StrToInt:
 	add $v0, $zero, $zero
 	add $t0, $a0, $a1	# t0 = p, p = str + a0 (vi tri bat dau cua str)
@@ -310,7 +310,8 @@ Day:
 	sw $ra, 8($sp)
 	sw $a1, 4($sp)
 	sw $a2, 0($sp)
-
+	
+	# Than thu tuc
 	# Day la 2 bit dau cua time(time(0), time(1))
 	add $a1, $zero, $zero
 	addi $a2, $zero, 1
@@ -334,7 +335,8 @@ Month:
 	sw $ra, 8($sp)
 	sw $a1, 4($sp)
 	sw $a2, 0($sp)
-
+	
+	# Than thu tuc
 	# Month la bit thu 3, 4 cua time(time(3), time(4))
 	addi $a1, $zero, 3
 	addi $a2, $zero, 4
@@ -358,7 +360,8 @@ Year:
 	sw $ra, 8($sp)
 	sw $a1, 4($sp)
 	sw $a2, 0($sp)
-
+	
+	# Than thu tuc
 	# Year la bit thu 6 den thu 9 cua time
 	addi $a1, $zero, 6
 	addi $a2, $zero, 9
@@ -378,17 +381,21 @@ Year:
 # Tham so: $a0: chuoi TIME; $a1: loai dinh dang (A-B-C)
 # Tra ve: $v0: dia chi chuoi TIME
 Convert:
+	# Dau thu tuc
+	addi $sp, $sp, -32
+	sw $ra, 28($sp)
+	sw $s0, 24($sp)
+	sw $s1, 20($sp)
+	sw $s2, 16($sp)
+	sw $s3, 12($sp)
+	sw $s4, 8($sp)
+	sw $s5, 4($sp)
+	sw $s6, 0($sp)
+	
+	# Than thu tuc
 	addi $t8, $a0, 0
 	addi $t7, $zero, '\n'
 	addi $t6, $zero, ' ' # $t6 la khoang trang
-	addi $sp, $sp, -28
-	sw $s0, 0($sp)
-	sw $s1, 4($sp)
-	sw $s2, 8($sp)
-	sw $s3, 12($sp)
-	sw $s4, 16($sp)
-	sw $s5, 20($sp)
-	sw $s6, 24($sp)
 	# Luu DD vao $s1-2
 	lb $s0, 0($a0)
 	lb $s1, 1($a0)
@@ -397,11 +404,7 @@ Convert:
 	beq $a1, $t0, A 
 	
 	# Neu toi buoc nay thi phai tinh ra ten Month
-	addi $sp, $sp, -4
-	sw $ra, 28($sp)
 	jal Month
-	lw $ra, 28($sp)
-	addi $sp, $sp, 4
 	
 	addi $v0, $v0, -1 # Tru di 1 de cho dung index voi array
 
@@ -410,7 +413,6 @@ Convert:
 	add $t2, $t2, $v0
 	lw $t3, 0($t2) # Luu ten thang vao $t3
 		
-	
 	# Luu YYYY vao $s3-6
 	lb $s3, 6($a0)
 	lb $s4, 7($a0)
@@ -453,7 +455,7 @@ Convert:
 	sb $t0, 3($a0)
 	sb $t6, 4($a0)
 	
-	#Load year
+	# Load year
 	sb $s3, 5($a0)
 	sb $s4, 6($a0)
 	sb $s5, 7($a0)
@@ -482,7 +484,7 @@ Convert:
 	sb $t0, 0($a0)
 	sb $t6, 1($a0)
 	
-	#Load year
+	# Load year
 	sb $s3, 2($a0)
 	sb $s4, 3($a0)
 	sb $s5, 4($a0)
@@ -491,18 +493,19 @@ Convert:
 	j Out
 	
 	Out:
-	
-	lw $s0, 0($sp)
-	lw $s1, 4($sp)
-	lw $s2, 8($sp)
-	lw $s3, 12($sp)
-	lw $s4, 16($sp)
-	lw $s5, 20($sp)
-	lw $s6, 24($sp)
-	addi $sp, $sp, 28
-	
 	addi $a0, $t8, 0
 	addi $v0, $t8, 0
+	# Cuoi thu tuc
+	lw $s6, 0($sp)
+	lw $s5, 4($sp)
+	lw $s4, 8($sp)
+	lw $s3, 12($sp)
+	lw $s2, 16($sp)
+	lw $s1, 20($sp)
+	lw $s0, 24($sp)
+	lw $ra, 28($sp)
+	addi $sp, $sp, 32
+	# Tra ve
 	jr $ra
 		
 
@@ -589,6 +592,7 @@ Date:
 	# Cuoi thu tuc 
 	lw $ra, 0($sp)
 	addi $sp, $sp, 4 
+	# Tra ve
 	jr $ra
 	
 #-------------------LeapYear Function---------------------------
@@ -620,17 +624,20 @@ LeapYear:
 	lw $ra, 4($sp)
 	# Xoa Stack
 	addi $sp, $sp, 8
-	# quay ve
+	
+	# Tra ve
 	jr $ra
 
 #-------------------CheckLeapYear Function---------------------------
 # Kiem tra nam nhuan chi voi nam 
 # nam nhuan <=> chia het cho 400 hoac chia het cho 4 nhung khong chia het cho 100
 CheckLeapYear:
+	# Dau thu tuc
 	addi $sp, $sp, -8
 	sw $ra, 4($sp)
 	sw $a0, 0($sp)
 	
+	# Than thu tuc
 	addi $t0, $zero, 400 # t0 = 400
 	div $a0, $t0 
 	mfhi $t0 # t0 = year % 400
@@ -651,6 +658,7 @@ CheckLeapYear:
 	
 	isLeapYear:
 	addi $v0, $zero, 1
+	# Cuoi thu tuc
 	lw $a0, 0($sp)
 	lw $ra, 4($sp)
 	addi $sp, $sp, 8
@@ -658,9 +666,11 @@ CheckLeapYear:
 	
 	isNotLeapYear:
 	addi $v0, $zero, 0
+	# Cuoi thu tuc
 	lw $a0, 0($sp)
 	lw $ra, 4($sp)
 	addi $sp, $sp, 8
+	# Tra ve
 	jr $ra
 
 #-----------------GetTime Function-----------------------------
@@ -668,74 +678,40 @@ CheckLeapYear:
 # Tham so: $a0: chuoi TIME_1, $a1: chuoi TIME_2
 # Tra ve: $v0: khoang cach nam giua 2 TIME (>=0)
 GetTime:
-	addi $sp, $sp, -28
-	sw $s0, 0($sp)
-	sw $s1, 4($sp)
-	sw $s2, 8($sp)
-	sw $s3, 12($sp)
-	sw $s4, 16($sp)
-	sw $s5, 20($sp)
-	sw $s6, 24($sp)
+	# Dau thu tuc
+	addi $sp, $sp, -36
+	sw $ra, 32($sp)
+	sw $s0, 28($sp)
+	sw $s1, 24($sp)
+	sw $s2, 20($sp)
+	sw $s3, 16($sp)
+	sw $s4, 12($sp)
+	sw $s5, 8($sp)
+	sw $s6, 4($sp)
+	sw $a0, 0($sp)
+	
+	# Than thu tuc
 	# $s0, $s1, $s2 = d1, m1, y1
 	# $s3, $s4, $s5 = d2, m2, y
 	
-	addi $sp, $sp, -12
-	sw $ra, 28($sp)
-	sw $a0, 32($sp)
 	jal Day
-	lw $ra, 28($sp)
-	lw $a0, 32($sp)
-	addi $sp, $sp, 8
 	addi $s0, $v0, 0 # Lay d1
 	
-	addi $sp, $sp, -8
-	sw $ra, 28($sp)
-	sw $a0, 32($sp)
 	jal Month
-	lw $ra, 28($sp)
-	lw $a0, 32($sp)
-	addi $sp, $sp, 8
 	addi $s1, $v0, 0 # Lay m1
 	
-	addi $sp, $sp, -8
-	sw $ra, 28($sp)
-	sw $a0, 32($sp)
 	jal Year
-	lw $ra, 28($sp)
-	lw $a0, 32($sp)
-	addi $sp, $sp, 8
-	addi $s2, $v0, 0 # Lay y1
+	addi $s2, $v0, 0 # Lay y1	
 	
-	
-	
-	addi $sp, $sp, -8
-	sw $ra, 28($sp)
-	sw $a0, 32($sp)
 	addi $a0, $a1, 0
+	
 	jal Day
-	lw $ra, 28($sp)
-	lw $a0, 32($sp)
-	addi $sp, $sp, 8
 	addi $s3, $v0, 0 # Lay d2
 	
-	addi $sp, $sp, -8
-	sw $ra, 28($sp)
-	sw $a0, 32($sp)
-	addi $a0, $a1, 0
 	jal Month
-	lw $ra, 28($sp)
-	lw $a0, 32($sp)
-	addi $sp, $sp, 8
 	addi $s4, $v0, 0 # Lay m2
 	
-	addi $sp, $sp, -8
-	sw $ra, 28($sp)
-	sw $a0, 32($sp)
-	addi $a0, $a1, 0
 	jal Year
-	lw $ra, 28($sp)
-	lw $a0, 32($sp)
-	addi $sp, $sp, 8
 	addi $s5, $v0, 0 # Lay y2
 	
 	slt $t7, $s5, $s2
@@ -783,17 +759,20 @@ GetTime:
 	
 	sub $v0, $v0, 1
 	
+	# Cuoi thu tuc
 	Done:
+	lw $a0, 0($sp)
+	lw $s6, 4($sp)
+	lw $s5, 8($sp)
+	lw $s4, 12($sp)
+	lw $s3, 16($sp)
+	lw $s2, 20($sp)
+	lw $s1, 24($sp)
+	lw $s0, 28($sp)
+	lw $ra, 32($sp)
+	addi $sp, $sp, 36
 	
-	lw $s0, 0($sp)
-	lw $s1, 4($sp)
-	lw $s2, 8($sp)
-	lw $s3, 12($sp)
-	lw $s4, 16($sp)
-	lw $s5, 20($sp)
-	lw $s6, 24($sp)
-	addi $sp, $sp, 28
-	
+	# Tra ve
 	jr $ra
 			
 #----------------Weekday Function------------------------------
@@ -809,6 +788,8 @@ Weekday:
 	sw $s1, 4($sp)
 	sw $s2, 0($sp)
 	
+	
+	# Than thu tuc
 	jal Day # lay ngay
 	add $s0, $v0, $zero
 	
@@ -928,6 +909,7 @@ NearestLeapYear:
 	lw $a0, 12($sp) 
 	lw $ra, 16($sp) 
 	addi $sp, $sp, 20
+	# Tra ve
 	jr $ra
 
 # ====== Ham Kiem Tra La So =========== 
@@ -967,6 +949,7 @@ isDigit:
 	j isDigit.Exit
 	isNotDigit:
 	add $v0, $zero, $zero
+	# Cuoi thu tuc
 	isDigit.Exit:
 	lw $t2, 0($sp)
 	lw $t1, 4($sp)
@@ -974,6 +957,7 @@ isDigit:
 	lw $a0, 12($sp)
 	lw $ra, 16($sp)
 	addi $sp, $sp, 20
+	# Tra ve
 	jr $ra
 
 # ====== Ham Input TIME ===========
@@ -1065,12 +1049,13 @@ inputTime:
 	
 	inputTime.exit:
 	add $v1, $s0, $zero
+	# Cuoi thu tuc
 	lw $s0, 0($sp)
 	lw $a1, 4($sp)
 	lw $a0, 8($sp)
 	lw $ra, 12($sp)
-	
 	addi $sp, $sp, 16
+	# Tra ve
 	jr $ra
 	
 # ====== Ham Chuyen Ky Tu Sang So Nguyen ===========
@@ -1111,8 +1096,8 @@ atoi:
 	lw $t1, 4($sp)
 	lw $t0, 8($sp)
 	lw $ra, 12($sp)
-
 	addi $sp, $sp, 16
+	# Tra ve
 	jr $ra
 # ====== Ham Kiem Tra Ngay Thang Nam ===========
 # bool checkValid(int Day, int Month, int Year)
@@ -1220,7 +1205,7 @@ checkValid:
 	lw $a2, 4($sp)
 	lw $a1, 8($sp)
 	lw $ra, 12($sp)
-	
 	addi $sp, $sp, 16
+	# Tra ve
 	jr $ra
 	
