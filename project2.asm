@@ -72,14 +72,38 @@ main:
 	la $a0,tb5
 	syscall
 	
+	ChoiceLoop:
 	addi $v0,$zero, 4
 	la $a0,tbLuaChon
 	syscall
 	
 	# Nhap lua chon
-	addi $v0, $zero,5
+	#addi $v0, $zero, 5
+	#syscall
+	#add $s0, $v0, 0 # luu gia tri nhap
+	
+	# Nhap Lua Chon
+	addi $v0, $zero, 8	
+	la $a0, Temp
+	addi $a1, $zero, 100
+	syscall 
+	addi $s0, $v0, 0 # luu gia tri nhap
+	
+	jal isDigit
+	beq $v0, $zero, ChoiceAgain
+	jal atoi
+	addi $s0, $v0, 0
+	
+	slti $t0, $s0, 1
+	bne $t0, $zero, ChoiceAgain
+	slti $t0, $s0, 7
+	beq $t0, $zero, ChoiceAgain
+	j MainLoop
+	ChoiceAgain:
+	addi $v0,$zero, 4
+	la $a0, msgNotValid
 	syscall
-	add $s0, $v0, 0 # luu gia tri nhap
+	j ChoiceLoop
 	
 	MainLoop:
 	# So sanh lua chon va thuc hien chuc nang
