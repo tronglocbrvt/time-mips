@@ -1,14 +1,12 @@
 .data
 	TIME_1: .space 120
 	TIME_2: .space 120
-	newline: .byte '\n'
 	
-	inputDay: .asciiz "\nNhap ngay DAY: "
-	inputMonth: .asciiz "\nNhap thang MONTH: "
-	inputYear: .asciiz "\nNhap nam YEAR: "
+	inputDay: .asciiz "Nhap ngay DAY: "
+	inputMonth: .asciiz "Nhap thang MONTH: "
+	inputYear: .asciiz "Nhap nam YEAR: "
 	continue: .asciiz "\nNeu muon tiep tuc thi nhan Y: "
 	msgNotValid: .asciiz "\nKhong hop le!\n"
-	msgValid: .asciiz "\nHop le!\n"
 	Temp: .space 100
 
 	#data cho ham convert
@@ -42,17 +40,14 @@
 
 	#data cho ham main
 	khoangTrang: .asciiz " "
-	tb1: .asciiz "Nhap day: "
-	tb2: .asciiz "Nhap month: "
-	tb3: .asciiz "Nhap year: "
 	tbLuaChon: .asciiz "Lua chon: "
-	tbDinhDang: .asciiz "Nhap loai dinh dang(A-B-C): "
-	tb4: .asciiz "\nKet Qua: "
+	tbDinhDang: .asciiz "Nhap loai dinh dang (A-B-C): "
+	tb1: .asciiz "Ket Qua: "
 	
-	tb5: .asciiz "----Ban hay chon 1 trong cac thao tac duoi day------\n1. Xuat chuoi TIME theo dinh day DD/MM/YYYY\n"
-	tb6: .asciiz "2. Chuyen doi chuoi TIME thanh 1 trong cac dinh dang sau:\n\tA. MM/DD/YYYY\n\tB. Month DD, YYYY\n\tC. DD Month, YYYY\n"
-	tb7: .asciiz "3. Cho biet ngay vua nhap la ngay thu may trong tuan\n4. Kiem tra nam trong chuoi TIME co phai la nam nhuan hay khong\n"
-	tb8: .asciiz "5. Cho biet khoang thoi gian giua chuoi TIME_1 va TIME_2\n6. Cho biet 2 nam nhuan gan nhat trong chuoi TIME\n"
+	tb2: .asciiz "----Ban hay chon 1 trong cac thao tac duoi day------\n1. Xuat chuoi TIME theo dinh day DD/MM/YYYY\n"
+	tb3: .asciiz "2. Chuyen doi chuoi TIME thanh 1 trong cac dinh dang sau:\n\tA. MM/DD/YYYY\n\tB. Month DD, YYYY\n\tC. DD Month, YYYY\n"
+	tb4: .asciiz "3. Cho biet ngay vua nhap la ngay thu may trong tuan\n4. Kiem tra nam trong chuoi TIME co phai la nam nhuan hay khong\n"
+	tb5: .asciiz "5. Cho biet khoang thoi gian giua chuoi TIME_1 va TIME_2\n6. Cho biet 2 nam nhuan gan nhat trong chuoi TIME\n--------------------------------------------\n"
 .text
 
 main:
@@ -60,99 +55,113 @@ main:
 	jal inputMain
 	
 	# Xuat menu cac lua chon
-	addi $v0,$0, 4
+	addi $v0,$zero, 4
+	la $a0,tb2
+	syscall
+	
+	addi $v0,$zero, 4
+	la $a0,tb3
+	syscall
+	
+	addi $v0,$zero, 4
+	la $a0,tb4
+	syscall
+	
+	addi $v0,$zero, 4
 	la $a0,tb5
 	syscall
 	
-	addi $v0,$0, 4
-	la $a0,tb6
-	syscall
-	
-	addi $v0,$0, 4
-	la $a0,tb7
-	syscall
-	
-	addi $v0,$0, 4
-	la $a0,tb8
-	syscall
-	
-	addi $v0,$0, 4
+	addi $v0,$zero, 4
 	la $a0,tbLuaChon
 	syscall
 	
 	#Nhap lua chon
-	addi $v0, $0,5
+	addi $v0, $zero,5
 	syscall
-	add $s3, $v0, 0
-	
-	#addi $v0, $0 ,4
-	#la $a0,tb4
-	#syscall
+	add $s0, $v0, 0 # luu gia tri nhap
 	
 	MainLoop:
-	#Tao so de so sanh
-	addi $t0, $0, 1
-	beq $s3, $t0, XuatChuoi_1	
+	# So sanh lua chon va thuc hien chuc nang
+	addi $t0, $zero, 1
+	beq $s0, $t0, XuatChuoi_1	
 	
-	addi $t0, $0, 2
-	beq $s3, $t0, Convert_2
+	addi $t0, $zero, 2
+	beq $s0, $t0, Convert_2
 	
-	addi $t0, $0, 3
-	beq $s3, $t0, WeekDay_3
+	addi $t0, $zero, 3
+	beq $s0, $t0, WeekDay_3
 	
-	addi $t0, $0, 4
-	beq $s3, $t0, LeapYear_4
+	addi $t0, $zero, 4
+	beq $s0, $t0, LeapYear_4
 	
-	addi $t0, $0, 5
-	beq $s3, $t0, GetTime_5
+	addi $t0, $zero, 5
+	beq $s0, $t0, GetTime_5
 	
-	addi $t0, $0, 6
-	beq $s3, $t0, NearLeap_6
+	addi $t0, $zero, 6
+	beq $s0, $t0, NearLeap_6
 	
 	XuatChuoi_1:
-	addi $v0, $0 ,4
-	la $a0,TIME_1
+	addi $v0, $zero, 4
+	la $a0,tb1
+	syscall
+	
+	addi $v0, $zero ,4
+	la $a0, TIME_1
 	syscall
 	j OutMainLoop
 	
 	Convert_2:
-	addi $v0,$0, 4
+	addi $v0, $zero, 4
 	la $a0,tbDinhDang
 	syscall
 	
 	la $a0, Temp
-	addi $a1, $0, 10
-	addi $v0, $0, 8
+	addi $a1, $zero, 10
+	addi $v0, $zero, 8
 	syscall
 	
-	#Chuyen dinh dang thanh char va luu vao $a1
+	# Chuyen dinh dang thanh char va luu vao $a1
 	lb $a1, 0($a0)	
 	la $a0, TIME_1
 	
 	jal Convert
 	
-	addi $v0, $0 ,4
-	la $a0,TIME_1
+	addi $v0, $zero, 4
+	la $a0,tb1
+	syscall
+	
+	addi $v0, $zero ,4
+	la $a0, TIME_1
 	syscall
 	
 	j OutMainLoop
 	
 	WeekDay_3:
+	
+	addi $v0, $zero, 4
+	la $a0,tb1
+	syscall
+	
 	la $a0, TIME_1
 	jal Weekday
 	
 	addi $a0, $v0, 0
-	addi $v0, $0,4
+	addi $v0, $zero, 4
 	syscall
 	
 	j OutMainLoop
 	
 	LeapYear_4:
+	
+	addi $v0, $zero, 4
+	la $a0,tb1
+	syscall
+	
 	la $a0, TIME_1
 	jal LeapYear
 	
 	addi $a0, $v0, 0
-	addi $v0, $0, 1
+	addi $v0, $zero, 1
 	syscall
 	
 	j OutMainLoop
@@ -162,15 +171,17 @@ main:
 	la $a0, TIME_2
 	jal inputMain
 	
+	addi $v0, $zero, 4
+	la $a0,tb1
+	syscall
 	
 	la $a0, TIME_1
 	la $a1, TIME_2
 	
-	
 	jal GetTime
 	
 	addi $a0, $v0, 0
-	addi $v0, $0, 1
+	addi $v0, $zero, 1
 	syscall
 	
 	j OutMainLoop
@@ -178,42 +189,46 @@ main:
 	
 	NearLeap_6:
 	
+	addi $v0, $zero, 4
+	la $a0,tb1
+	syscall
+	
 	la $a0, TIME_1
 	jal NearestLeapYear
 	
 	addi $a0, $v0, 0
-	addi $v0, $0, 1
+	addi $v0, $zero, 1
 	syscall
 	
-	addi $v0,$0, 4
+	addi $v0,$zero, 4
 	la $a0, khoangTrang
 	syscall
 	
 	addi $a0, $v1, 0
-	addi $v0, $0, 1
+	addi $v0, $zero, 1
 	syscall
 	
 	j OutMainLoop
 	
 	OutMainLoop:
 
-	addi $v0,$0, 4
-	la $a0,continue
+	addi $v0, $zero, 4
+	la $a0, continue
 	syscall	
 
 	la $a0, Temp
-	addi $a1, $0, 10
-	addi $v0, $0, 8
+	addi $a1, $zero, 10
+	addi $v0, $zero, 8
 	syscall
 	
-	#Chuyen dinh dang thanh char va luu vao $t0
+	# Chuyen dinh dang thanh char va luu vao $t0
 	lb $t0, 0($a0)
 	
-	addi $t1, $0, 'Y'
+	addi $t1, $zero, 'Y'
 	
 	beq $t0, $t1, main
 	
-	addi $v0, $0, 10
+	addi $v0, $zero, 10
 	syscall
 	
 
@@ -249,8 +264,8 @@ Day:
 	sw $a2, 8($sp)
 
 	# Day la 2 bit dau cua time(time(0), time(1))
-	add $a1, $0, $0
-	addi $a2, $0, 1
+	add $a1, $zero, $zero
+	addi $a2, $zero, 1
 	jal StrToInt
 
 	# lay ket qua v0 tu stack
@@ -271,8 +286,8 @@ Month:
 	sw $a2, 8($sp)
 
 	# Month la bit thu 3, 4 cua time(time(3), time(4))
-	addi $a1, $0, 3
-	addi $a2, $0, 4
+	addi $a1, $zero, 3
+	addi $a2, $zero, 4
 	jal StrToInt
 
 	# lay ket qua v0 tu stack
@@ -293,8 +308,8 @@ Year:
 	sw $a2, 8($sp)
 
 	# Year la bit thu 6 den thu 9 cua time
-	addi $a1, $0, 6
-	addi $a2, $0, 9
+	addi $a1, $zero, 6
+	addi $a2, $zero, 9
 	jal StrToInt
 
 	# lay ket qua v0 tu stack
@@ -307,8 +322,8 @@ Year:
 #----------------Convert------------------------------
 Convert:
 	addi $t8, $a0, 0
-	addi $t7, $0, '\n'
-	addi $t6, $0, ' ' # $t6 la khoang trang
+	addi $t7, $zero, '\n'
+	addi $t6, $zero, ' ' # $t6 la khoang trang
 	addi $sp, $sp, -28
 	sw $s0, 0($sp)
 	sw $s1, 4($sp)
@@ -321,7 +336,7 @@ Convert:
 	lb $s0, 0($a0)
 	lb $s1, 1($a0)
 	
-	addi $t0, $0, 'A'
+	addi $t0, $zero, 'A'
 	beq $a1, $t0, A 
 	
 	# Neu toi buoc nay thi phai tinh ra ten Month
@@ -345,9 +360,9 @@ Convert:
 	lb $s5, 8($a0)
 	lb $s6, 9($a0)
 
-	addi $t0, $0, 'B'
+	addi $t0, $zero, 'B'
 	beq $a1, $t0, B 
-	addi $t0, $0, 'C'
+	addi $t0, $zero, 'C'
 	beq $a1, $t0, C 
 	
 	A:
@@ -367,7 +382,7 @@ Convert:
 	# Luu ten thang
 	Loop:	
 	lb $t0, 0($t3) 
-	beq $t0, $0, OutLoop
+	beq $t0, $zero, OutLoop
 	beq $t0, $7, OutLoop
 	sb $t0, 0($a0)
 	addi $a0, $a0, 1
@@ -377,7 +392,7 @@ Convert:
 	sb $t6, 0($a0)
 	sb $s0, 1($a0)
 	sb $s1, 2($a0)
-	addi $t0, $0, ','
+	addi $t0, $zero, ','
 	sb $t0, 3($a0)
 	sb $t6, 4($a0)
 	
@@ -386,7 +401,7 @@ Convert:
 	sb $s4, 6($a0)
 	sb $s5, 7($a0)
 	sb $s6, 8($a0)
-	sb $0, 9($a0)
+	sb $zero, 9($a0)
 	
 	j Out
 	C:
@@ -396,7 +411,7 @@ Convert:
 	addi $a0, $a0, 3
 	LoopC:	
 	lb $t0, 0($t3)
-	beq $t0, $0, OutLoopC
+	beq $t0, $zero, OutLoopC
 	beq $t0, $7, OutLoopC
 	sb $t0, 0($a0)
 	addi $a0, $a0, 1
@@ -404,7 +419,7 @@ Convert:
 	j LoopC
 	OutLoopC:
 	
-	addi $t0, $0, ','
+	addi $t0, $zero, ','
 	sb $t0, 0($a0)
 	sb $t6, 1($a0)
 	
@@ -413,7 +428,7 @@ Convert:
 	sb $s4, 3($a0)
 	sb $s5, 4($a0)
 	sb $s6, 5($a0)
-	sb $0, 6($a0)
+	sb $zero, 6($a0)
 	j Out
 	
 	Out:
@@ -661,43 +676,43 @@ GetTime:
 
 	
 	slt $t7, $s5, $s2
-	beq $t7, $0, NotSwitch # Neu y2 < y1 ma sai thi khong switch 2 ngay
+	beq $t7, $zero, NotSwitch # Neu y2 < y1 ma sai thi khong switch 2 ngay
 	
 	# Doi 2 ngày cho nhau neu y2 < y1
-	add $t7, $s3, $0 
-	add $s3, $s0, $0
-	add $s0, $t7, $0
+	add $t7, $s3, $zero 
+	add $s3, $s0, $zero
+	add $s0, $t7, $zero
 	
-	add $t7, $s4, $0 
-	add $s4, $s1, $0
-	add $s1, $t7, $0
+	add $t7, $s4, $zero 
+	add $s4, $s1, $zero
+	add $s1, $t7, $zero
 	
-	add $t7, $s5, $0 
-	add $s5, $s2, $0
-	add $s2, $t7, $0
+	add $t7, $s5, $zero 
+	add $s5, $s2, $zero
+	add $s2, $t7, $zero
 	
 	NotSwitch:
 	
 	sub $v0, $s5, $s2 # Ket qua luu
 	
-	beq $v0, $0, Done
+	beq $v0, $zero, Done
 	
 	slt $t7, $s4, $s1 # m2 < m1
-	bne $t7, $0, Minus
+	bne $t7, $zero, Minus
 	
 	bne $s4, $s1, Done # m2 > m1 thi done
 	
 	slt $t7, $s3, $s0
-	beq $t7, $0, Done # d2 >= d1 thi done
+	beq $t7, $zero, Done # d2 >= d1 thi done
 	
 	# So sanh xem co phai la ngay 29/2 va 28/2 hay khong
-	addi $t7, $0, 2 # tao hang so de so sánh
+	addi $t7, $zero, 2 # tao hang so de so sánh
 	bne $s4, $t7, Minus
 	
-	addi $t7, $0, 29
+	addi $t7, $zero, 29
 	bne $s0, $t7, Minus
 	
-	addi $t7, $0, 28
+	addi $t7, $zero, 28
 	bne $s3, $t7, Minus
 	j Done
 	
@@ -761,7 +776,7 @@ Weekday:
 	
 
 	
-	beq $v0, $0, NotLeap
+	beq $v0, $zero, NotLeap
 	# m = LeapMonths[m]
 	la $t3, leapMonths
 	sll $t1, $t1, 2
@@ -827,28 +842,28 @@ NearestLeapYear:
 	lw $a0, 12($sp)
 	jal Year
 	#lw $s0, 0($sp)
-	add $s0, $v0, $0 # luu lai gia tri YEAR
+	add $s0, $v0, $zero # luu lai gia tri YEAR
 	
 	subi $s1, $s0, 1 # luu gia tri buoc nhay NAM back
 	addi $s2, $s0, 1 # luu gia tri buoc nhay NAM next
 	sw $a0, 12($sp) 
 NearestLeapYear_back:
-	add $a0, $s1, $0
+	add $a0, $s1, $zero
 	jal CheckLeapYear
 	bne $v0, $zero, NearestLeapYear_next # neu la nam nhuan
 	subi $s1, $s1, 1 # giám t0 len 1
 	j NearestLeapYear_back
 
 NearestLeapYear_next:
-	add $a0, $s2, $0
+	add $a0, $s2, $zero
 	jal CheckLeapYear
 	bne $v0, $zero, returnLeapYear # neu la nam nhuan
 	addi $s2, $s2, 1
 	j NearestLeapYear_next
 
 returnLeapYear:
-	add $v0, $s1, $0
-	add $v1, $s2, $0
+	add $v0, $s1, $zero
+	add $v1, $s2, $zero
 
 # Cuoi thu tuc
 	lw $s2, 0($sp)
@@ -863,15 +878,15 @@ returnLeapYear:
 #$a0 str
 #$v0 int
 StrToInt:
-	add $v0, $0, $0
+	add $v0, $zero, $zero
 	add $t0, $a0, $a1	# t0 = p, p = str + a0 (vi tri bat dau cua str)
 	add $t1, $a0, $a2	# t1 = str + a1
 	addi $t1, $t1, 1	# t1 = str + a1 + 1 (vi tri ket thuc cua str)
 StrToIntLoop:
 	slt $t2, $t0, $t1
-	beq $t2, $0, StrToIntExit # neu p = 0 (chuoi rong) thi exit
+	beq $t2, $zero, StrToIntExit # neu p = 0 (chuoi rong) thi exit
 	# num += n[i] * 10^(n-j)
-	addi $t3, $0, 10
+	addi $t3, $zero, 10
 	mult $v0, $t3
 	mflo $v0		# v0 = v0 * 10
 	lb $t3, 0($t0)		# t3 = *p
@@ -941,7 +956,7 @@ inputTime:
 	sw $a1, 4($sp)
 	sw $s0, 0($sp)
 	
-	add $s0, $a0, $0
+	add $s0, $a0, $zero
 	# add $t0, $zero, $zero # bien tam de kiem tra tinh trang so lan nhap DAY, MONTH, YEAR toan la so
 	# Than thu tuc
 	# Nhap chuoi ngay
