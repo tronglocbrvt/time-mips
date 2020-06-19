@@ -6,7 +6,7 @@
 	inputMonth: .asciiz "Nhap thang MONTH: "
 	inputYear: .asciiz "Nhap nam YEAR: "
 	continue: .asciiz "\nNeu muon tiep tuc thi nhan Y: "
-	msgNotValid: .asciiz "\nKhong hop le!\n"
+	msgNotValid: .asciiz "Khong hop le!\n"
 	Temp: .space 100
 
 	#data cho ham convert
@@ -168,7 +168,8 @@ main:
 	
 	GetTime_5:
 	#Goi ham nhap va luu vao TIME_2
-	la $a0, TIME_2
+	la $a0, Temp
+	la $a1, TIME_2
 	jal inputMain
 	
 	addi $v0, $zero, 4
