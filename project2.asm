@@ -467,8 +467,6 @@ Convert:
 	
 	C: # Dinh dang DD Month, YYYY
 
-	sb $s0, 0($a0)
-	sb $s1, 1($a0)
 	sb $t6, 2($a0)
 	addi $a0, $a0, 3
 	LoopC:	
