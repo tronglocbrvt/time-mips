@@ -434,6 +434,7 @@ Convert:
 	sb $s1, 4($a0)
 	sb $t0, 0($a0)
 	sb $t1, 1($a0)
+	sb $zero, 10($a0)
 	j Out
 	
 	B: # Dinh dang Month DD, YYYY
@@ -588,6 +589,7 @@ Date:
 	# luu du lieu tu thanh ghi vao bo nho
 	sb $t1, 8($a3)
 	sb $t2, 9($a3)
+	sb $zero, 10($a3)
 	add $v0, $a3, $zero
 	# Cuoi thu tuc 
 	lw $ra, 0($sp)
